@@ -46,6 +46,9 @@ template<typename T>
 class Sampler
 {
     private:
+        // Run identity
+        int run_id;
+
         // Options object
         SamplerOptions options;
 
@@ -102,10 +105,23 @@ Sampler<T>::Sampler(RNG& rng)
     db << "COMMIT;";
     // Done creating database tables
     
+    // Get number of runs from database and use it to assign the run_id
+    int num_runs;
+    db << "SELECT COUNT(id) FROM runs;" >> num_runs;
+    if(num_runs == 0)
+        run_id = 1;
+    else
+    {
+        db << "SELECT MAX(id) FROM runs;" >> run_id;
+        ++run_id;
+    }
+
     // Write this run's info to the database
     db << "BEGIN;";
-    db << "INSERT INTO runs (num_particles, mcmc_steps)\
-                VALUES (?, ?);" << options.num_particles << options.mcmc_steps;
+    db << "INSERT INTO runs\
+                (id, num_particles, mcmc_steps)\
+                VALUES (?, ?, ?);"
+       << run_id << options.num_particles << options.mcmc_steps;
     db << "COMMIT;";
 }
 
@@ -123,7 +139,12 @@ void Sampler<T>::do_iteration(RNG& rng)
 
     // Save the scalars
     db << "BEGIN;";
-    db << "INSERT INTO particles ()
+    db << "INSERT INTO particles\
+                (run_id, iteration, scalar1, scalar2) VALUES\
+                (?, ?, ?, ?);"
+       << run_id << iteration
+       << std::get<0>(scalars[worst]) << std::get<1>(scalars[worst]);
+    db << "COMMIT;";
 }
 
 /* End Sampler implementations */
