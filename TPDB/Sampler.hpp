@@ -49,6 +49,9 @@ class Sampler
         // Options object
         SamplerOptions options;
 
+        // Current iteration
+        int iteration;
+
         // Particles and their scalars
         std::vector<T> particles;
         std::vector<std::pair<double, double>> scalars;
@@ -60,6 +63,9 @@ class Sampler
 
         // Default constructor
         Sampler(RNG& rng);
+
+        // Do NS iteration
+        void do_iteration(RNG& rng);
 };
 
 /* Begin Sampler implementations */
@@ -67,6 +73,7 @@ class Sampler
 template<typename T>
 Sampler<T>::Sampler(RNG& rng)
 :options(100, 1000)
+,iteration(0)
 ,db("output/output.db")
 {
     for(int i=0; i<options.num_particles; ++i)
@@ -88,6 +95,7 @@ Sampler<T>::Sampler(RNG& rng)
     db << "CREATE TABLE IF NOT EXISTS particles\
                 (id            INTEGER PRIMARY KEY,\
                  run_id        INTEGER NOT NULL,\
+                 iteration     INTEGER NOT NULL,\
                  scalar1       REAL NOT NULL,\
                  scalar2       REAL NOT NULL,\
                  FOREIGN KEY (run_id) REFERENCES runs (id));";
@@ -99,6 +107,23 @@ Sampler<T>::Sampler(RNG& rng)
     db << "INSERT INTO runs (num_particles, mcmc_steps)\
                 VALUES (?, ?);" << options.num_particles << options.mcmc_steps;
     db << "COMMIT;";
+}
+
+template<typename T>
+void Sampler<T>::do_iteration(RNG& rng)
+{
+    // Increment counter
+    ++iteration;
+
+    // Find worst particle
+    int worst = 0;
+    for(int i=1; i<options.num_particles; ++i)
+        if(std::get<0>(scalars[i]) < std::get<0>(scalars[worst]))
+            worst = i;
+
+    // Save the scalars
+    db << "BEGIN;";
+    db << "INSERT INTO particles ()
 }
 
 /* End Sampler implementations */
