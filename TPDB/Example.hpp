@@ -32,7 +32,7 @@ class Example
         double perturb(RNG& rng);
 
         // Return scalars
-        std::tuple<double, double> get_scalars() const;
+        std::pair<double, double> get_scalars() const;
 
         // Render as string
         std::string render() const;
@@ -61,7 +61,7 @@ double Example::perturb(RNG& rng)
     return 0;
 }
 
-std::tuple<double, double> Example::get_scalars() const
+std::pair<double, double> Example::get_scalars() const
 {
     double f1 = 0.0;
     double f2 = 0.0;
