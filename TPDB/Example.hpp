@@ -23,10 +23,7 @@ class Example
     public:
 
         // Constructor
-        Example();
-
-        // Generate from prior
-        void from_prior(RNG& rng);
+        Example(RNG& rng);
 
         // Metropolis proposal in-place, return log(hastings) for prior sampling
         double perturb(RNG& rng);
@@ -41,13 +38,8 @@ class Example
 
 /* IMPLEMENTATIONS FOLLOW */
 
-Example::Example()
+Example::Example(RNG& rng)
 :xs(N)
-{
-
-}
-
-void Example::from_prior(RNG& rng)
 {
     for(int i=0; i<N; ++i)
         xs[i] = rng.rand();
