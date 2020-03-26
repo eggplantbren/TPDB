@@ -1,8 +1,8 @@
 #ifndef TPDB_Example_hpp
 #define TPDB_Example_hpp
 
-#include "DNest4/code/RNG.h"
-#include "DNest4/code/Utils.h"
+#include <DNest4/code/RNG.h>
+#include <DNest4/code/Utils.h>
 #include <tuple>
 
 using DNest4::RNG;

@@ -9,5 +9,5 @@ default:
 	$(CXX) $(ALL) -c TPDB/Example.hpp
 	$(CXX) $(ALL) -c TPDB/Sampler.hpp
 	$(CXX) $(ALL) -c main.cpp
-	$(CXX) -L$(DNEST4_PATH)/DNest4/code -o main main.o -ldnest4
+	$(CXX) -L$(DNEST4_PATH)/DNest4/code -o main main.o -ldnest4 -lsqlite3
 	rm -f main.o TPDB/*.gch
